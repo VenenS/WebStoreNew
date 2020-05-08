@@ -27,6 +27,7 @@ namespace WebStore
             
             services.AddMvc();
             services.AddSingleton<IEmployeesData, InMemoryEmployeesData>();
+            services.AddSingleton<IProductData, InMemoryProductData>();
         }
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -34,6 +35,7 @@ namespace WebStore
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseBrowserLink();
             }
             
             app.UseStaticFiles();

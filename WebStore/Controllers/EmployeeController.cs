@@ -38,7 +38,7 @@ namespace WebStore.Controllers
         [Route("edit/{id?}")]
         public IActionResult Edit(int? id)
         {
-            EmployeeView model;
+            EmployeeViewModel model;
             if (id.HasValue)
             {
                 model = _employeesData.GetById(id.Value);
@@ -47,33 +47,39 @@ namespace WebStore.Controllers
             }
             else
             {
-                model = new EmployeeView();
+                model = new EmployeeViewModel();
             }
             return View(model);
         }
 
         [HttpPost]
         [Route("edit/{id?}")]
-        public IActionResult Edit(EmployeeView model)
+        public IActionResult Edit(EmployeeViewModel model)
         {
-            if (model.Id > 0)
+            if (ModelState.IsValid)
             {
-                var dbItem = _employeesData.GetById(model.Id);
-                if (ReferenceEquals(dbItem, null))
-                    return NotFound();
+                if (model.Id > 0)
+                {
+                    var dbItem = _employeesData.GetById(model.Id);
+                    if (ReferenceEquals(dbItem, null))
+                        return NotFound();
 
-                dbItem.FirstName = model.FirstName;
-                dbItem.SurName = model.SurName;
-                dbItem.Age = model.Age;
-                dbItem.Patronymic = model.Patronymic;
-                dbItem.Position = model.Position;
+                    dbItem.FirstName = model.FirstName;
+                    dbItem.SurName = model.SurName;
+                    dbItem.Age = model.Age;
+                    dbItem.Patronymic = model.Patronymic;
+                    dbItem.Position = model.Position;
+                }
+                else
+                {
+                    _employeesData.AddNew(model);
+                }
+
+                _employeesData.Commit();
+                return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                _employeesData.AddNew(model);
-            }
-            _employeesData.Commit();
-            return RedirectToAction(nameof(Index));
+
+            return View(model);
         }
 
         [Route("delete/{id}")]

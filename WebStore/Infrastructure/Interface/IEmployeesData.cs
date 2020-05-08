@@ -6,14 +6,14 @@ namespace WebStore.Infrastructure.Interface
     public interface IEmployeesData
     {
         //получение списка сотрудников
-        IEnumerable<EmployeeView> GetAll();
+        IEnumerable<EmployeeViewModel> GetAll();
         //получение сотрудника по id
-        EmployeeView GetById(int id);
+        EmployeeViewModel GetById(int id);
 
         //сохранить
         void Commit();
         //добавить
-        void AddNew(EmployeeView model);
+        void AddNew(EmployeeViewModel model);
         //удалить
         void Delete(int id);
     }
