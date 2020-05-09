@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using WebStore.Domain.Entities;
+using WebStore.DomainNew.Entities;
 using WebStore.Infrastructure.Interface;
 using WebStore.Models;
 

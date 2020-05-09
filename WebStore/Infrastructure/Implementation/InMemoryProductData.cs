@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using WebStore.Infrastructure.Interface;
-using WebStore.Domain.Entities;
-using WebStore.Domain.Filters;
+using WebStore.DomainNew.Entities;
+using WebStore.DomainNew.Filters;
 
 namespace WebStore.Infrastructure.Implementation
 {
