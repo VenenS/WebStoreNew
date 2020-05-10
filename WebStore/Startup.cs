@@ -28,34 +28,44 @@ namespace WebStore
         
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            //Добавляем сервисы, необходимые для mvc
             services.AddMvc();
+            //Добавляем разрешение зависимостей
+            services.AddSingleton<IEmployeesData, InMemoryEmployeesData>();
+            services.AddScoped<IProductData, SqlProductData>();
+            //Добавляем EF Core
             services.AddDbContext<WebStoreContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddSingleton<IEmployeesData, InMemoryEmployeesData>();
-            services.AddSingleton<IProductData, InMemoryProductData>();
+            //Настройка Identity
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<WebStoreContext>()
                 .AddDefaultTokenProviders();
             services.Configure<IdentityOptions>(options =>
             {
+                // Password settings
                 options.Password.RequiredLength = 6;
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                // Lockout settings
+                options.Lockout.DefaultLockoutTimeSpan =
+                    TimeSpan.FromMinutes(30);
                 options.Lockout.MaxFailedAccessAttempts = 10;
                 options.Lockout.AllowedForNewUsers = true;
+                // User settings
                 options.User.RequireUniqueEmail = true;
             });
-
             services.ConfigureApplicationCookie(options =>
             {
+                
                 options.Cookie.HttpOnly = true;
                 options.Cookie.Expiration = TimeSpan.FromDays(150);
-                options.LoginPath = "/Account/Login";
-                options.LogoutPath = "/Account/Logout";
-                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.LoginPath = "/Account/Login"; 
+                options.LogoutPath = "/Account/Logout"; 
+                options.AccessDeniedPath = "/Account/AccessDenied"; 
                 options.SlidingExpiration = true;
             });
+            
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<ICartService, CookieCartService>();
         }
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
