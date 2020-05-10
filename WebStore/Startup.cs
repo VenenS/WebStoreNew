@@ -28,16 +28,16 @@ namespace WebStore
         
         public void ConfigureServices(IServiceCollection services)
         {
-            //Добавляем сервисы, необходимые для mvc
             services.AddMvc();
-            //Добавляем разрешение зависимостей
+            // Добавляем разрешение зависимостей
             services.AddSingleton<IEmployeesData, InMemoryEmployeesData>();
             services.AddScoped<IProductData, SqlProductData>();
-            //Добавляем EF Core
+            services.AddScoped<IOrdersService, SqlOrderService>();
+            // Добавляем EF Core
             services.AddDbContext<WebStoreContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            //Настройка Identity
+            // Настройка Identity
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<WebStoreContext>()
                 .AddDefaultTokenProviders();
@@ -55,15 +55,16 @@ namespace WebStore
             });
             services.ConfigureApplicationCookie(options =>
             {
-                
+                // Cookie settings
                 options.Cookie.HttpOnly = true;
                 options.Cookie.Expiration = TimeSpan.FromDays(150);
-                options.LoginPath = "/Account/Login"; 
-                options.LogoutPath = "/Account/Logout"; 
+                options.LoginPath = "/Account/Login";
+                // If the LoginPath is not set here, ASP.NET Core will default to /Account/Login
+                options.LogoutPath = "/Account/Logout";
                 options.AccessDeniedPath = "/Account/AccessDenied"; 
                 options.SlidingExpiration = true;
             });
-            
+            //Настройки для корзины
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<ICartService, CookieCartService>();
         }
@@ -82,6 +83,9 @@ namespace WebStore
             
             app.UseMvc(routes =>
             {
+                routes.MapRoute(
+                    name: "areas",
+                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
