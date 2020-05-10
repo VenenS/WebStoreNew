@@ -67,10 +67,11 @@ namespace WebStore.Controllers
                 Email = model.Email
             }; 
             var createResult = await _userManager.CreateAsync(user,
-                model.Password); 
+                model.Password);
             if (createResult.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
+                await _userManager.AddToRoleAsync(user, "User");
                 return RedirectToAction("Index", "Home");
             }
             foreach (var identityError in createResult.Errors)
